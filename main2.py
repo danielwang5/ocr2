@@ -2,6 +2,13 @@ import numpy as np
 import cv2
 from collections import defaultdict
 
+show_identified_characters = False
+remove = True
+add = True
+write_step = True
+image = 'example_03.jpg'
+
+
 def get_roi_area_coords(contour):
 	x, y, w, h = cv2.boundingRect(contour)
 	roi = img[y:y + h, x:x + w]
@@ -52,15 +59,12 @@ def find_nearest_color(img,mask,coord):
 
 
 # Read image, convert to black/white, find the contours, remove  outline of image
-img = cv2.imread('example_02.jpg')
+img = cv2.imread(image)
 new_img =img.copy() 
 img_gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
 ret,thresh = cv2.threshold(img_gray,127,255,0)
 img2, contours, hierarchy = cv2.findContours(thresh,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
 contours = sorted(contours, key=lambda contour: get_roi_area_coords(contour)[1], reverse=True)
-# cv2.drawContours(img, contours, 0, (0,255,0), 3)
-# cv2.imshow('img', img)
-# cv2.waitKey(5000)
 contours = contours[1:]
 
 
@@ -81,7 +85,7 @@ out_contours = [_ for _ in range(len(contours)) if _ not in in_contours]
 num_clicks = 0
 click_list = []
 
-#Click code
+# Click code
 def on_click(event,x,y,flags,param):
 	global num_clicks, click_list
 
@@ -98,7 +102,7 @@ def on_click(event,x,y,flags,param):
 
 cv2.namedWindow('image')
 cv2.setMouseCallback('image',on_click)
-img = cv2.imread('example_02.jpg')
+img = cv2.imread(image)
 cv2.imshow('image',img)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
@@ -106,21 +110,20 @@ coords = click_list[:4]
 x3,y3 = click_list[4:]
 x1,y1,x2,y2 = coords
 print(coords)
+dx, dy = x3-x1, y3-y1
 
 # Show all out contours
-# for i in out_contours:
-# 	contour = contours[i]
-# 	roi, area, coords = get_roi_area_coords(contour)
-# 	xs, ys, xn, yn = coords
-# 	rect = cv2.rectangle(img, (xs, ys), (xn, yn), (0, 255, 0), 2)
-# 	cv2.imshow('rect', rect)
+if show_identified_characters:
+	for i in out_contours:
+		contour = contours[i]
+		roi, area, coords = get_roi_area_coords(contour)
+		xs, ys, xn, yn = coords
+		rect = cv2.rectangle(img, (xs, ys), (xn, yn), (0, 255, 0), 2)
+		cv2.imshow('rect', rect)
 
-# cv2.waitKey(5000)
+	cv2.waitKey(5000)
 
-# Cover selected characters in white
-#coords = [0, 0, 500, 500]
-#x3,y3 = [50, 50]
-#coords = [x1, y1, x2, y2]
+
 selected_contours = []
 for i in out_contours:
 	contour = contours[i]
@@ -128,35 +131,41 @@ for i in out_contours:
 		selected_contours.append(i)
 print(selected_contours)
 
-for i in selected_contours:
-	contour = contours[i]
-	mask = find_inter_region(contours,i)
-	for x in range(len(mask)):
-		for y in range(len(mask[0])):
-			if np.all(mask[x][y]):
-				#new_img[x,y] = (0,0,255)
-				#print(find_nearest_color(img,mask,[x,y]))
-				new_img[x,y] = find_nearest_color(img,mask,[x,y])
-	#cv2.imshow('aaa',new_img)	
-	#cv2.waitKey(0)
 
+# Remove selected contours
+if remove:
+	for i in selected_contours:
+		contour = contours[i]
+		mask = find_inter_region(contours,i)
+		for x in range(len(mask)):
+			for y in range(len(mask[0])):
+				if np.all(mask[x][y]):
+					#print(find_nearest_color(img,mask,[x,y]))
+					new_img[x,y] = find_nearest_color(img,mask,[x,y])
+		#cv2.imshow('aaa',new_img)	
+		#cv2.waitKey(0)
 
-#cv2.waitKey(1000)
-
-dx, dy = x3-x1, y3-y1
-print(dx,dy)
 # Draw the new contours
-for i in selected_contours:
-	print(i)
-	contour = contours[i]
-	mask = find_inter_region(contours,i)
-	for x in range(len(mask)):
-		for y in range(len(mask[0])):
-			if np.all(mask[x][y]):
-				new_img[x+dx,y+dy] = img[x,y]
-
-	cv2.imwrite('new2' + str(i) + '.jpg',new_img)
+if add:
+	n = 0
+	for i in selected_contours:
+		n+= 1
+		print(i)
+		contour = contours[i]
+		mask = find_inter_region(contours,i)
+		for x in range(len(mask)):
+			for y in range(len(mask[0])):
+				if np.all(mask[x][y]):
+					new_img[x+dx,y+dy] = img[x,y]
+		if write_step:
+			cv2.imwrite(image[:-4] + '_' + str(n) + '.jpg', new_img)
 
 # Save the image
-cv2.imwrite('new2.jpg',new_img)
+cv2.imwrite(image[:-4] + '_new.jpg', new_img)
 print('Done')
+
+
+
+
+
+
