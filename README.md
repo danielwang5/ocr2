@@ -2,11 +2,30 @@
 
 ## Goal
 
-Duplicate or move particular characters (or more broadly, patterns) in an image.
+Identify characters (or more broadly, patterns) within a scanned image and edit the image by duplicating, removing, or relocating selected characters. 
 
-## Example Usage
+## Demonstration
 
-python main2.py --image=example_03.jpg --no-add
+Replace a pattern
+```
+python main2.py --image example_01.jpg
+```
+Duplicate a pattern
+```
+python main2.py --image example_01.jpg --no-remove
+```
+Remove a pattern
+```
+python main2.py --image example_01.jpg --no-add
+```
+Show the identified characters
+```
+python main2.py --image example_01.jpg --show-identified-characters
+```
+Store a picture for each step during the process
+```
+python main2.py --image example_01.jpg --write-step
+```
 
 ## Outline
 
@@ -18,7 +37,6 @@ python main2.py --image=example_03.jpg --no-add
    * Grab all pixels in parent contour but outside child contour(s)
    * Can do this in a row by row basis with XOR filtering
    * Create masks to mark out the inter-region of characters.
-  
 5. Remove selected characters and fill in missing background information
    * Remove the pixels in the inter-region of selected characters
    * Take neighest neighbor of edge pixel, and loop until all missing background pixels are filled
@@ -57,6 +75,7 @@ Our user inputs is a bounding box (which encapsulates the contours to be moved) 
 ## Dependencies
 
 1. OpenCV
-2. Click
-3. Numpy
-
+2. Numpy
+3. click
+4. collections
+5. random
