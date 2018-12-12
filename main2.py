@@ -25,9 +25,21 @@ def inside_select(coords,contour):
 
 
 def find_inside_region(contours,i):
-	cimg = np.zeros_like(img)
-	cv2.drawContours(cimg, contours, i, color=1, thickness=-1)
-	return cimg
+	mask = np.zeros_like(img)
+	cv2.drawContours(mask, contours, i, (1,1,1), -1)
+	return mask
+
+def find_inter_region(contours,i):
+	mask = find_inside_region(contours,i)
+	if levels[i] == []:
+		return mask
+	else:
+		for child in levels[i]:
+			child_mask = find_inside_region(contours,child)
+			mask -= child_mask
+	#print(mask)
+	return mask
+
 
 
 
@@ -107,13 +119,17 @@ for i in out_contours:
 	if inside_select(coords,contour):
 		selected_contours.append(i)
 print(selected_contours)
+
 for i in selected_contours:
 	contour = contours[i]
-	roi, area, coords = get_roi_area_coords(contour)
-	xs, ys, xn, yn = coords
-	cv2.rectangle(new_img,(xs, ys),(xn, yn),(255,255,255),-1)
-	#r = cv2.rectangle(img,(xs, ys),(xn, yn),(0,255,0),-1)
-	#cv2.imshow('ddd', r)
+	mask = find_inter_region(contours,i)
+	for x in range(len(mask)):
+		for y in range(len(mask[0])):
+			if np.all(mask[x][y]):
+				new_img[x,y] = (0,0,255)
+	cv2.imshow('aaa',new_img)	
+	cv2.waitKey(0)
+
 
 #cv2.waitKey(1000)
 
@@ -124,27 +140,15 @@ print(dx,dy)
 for i in selected_contours:
 	print(i)
 	contour = contours[i]
-	roi, area, coords = get_roi_area_coords(contour)
-	xs, ys, xe, ye = coords
-	print(coords)
-	#print(new_img.shape)
-	#print(img.shape)
-	#print(new_img[xs+dx:xe+dx, ys+dy:ye+dy].shape)
-	#print(img[xs:xe, ys:ye].shape)
-	new_img[ys+dy:ye+dy,xs+dx:xe+dx] = img[ys:ye, xs:xe]
-	print(xs+dx,xe+dx, ys+dy,ye+dy)
-	print(xs,xe, ys,ye)
+	mask = find_inter_region(contours,i)
+	for x in range(len(mask)):
+		for y in range(len(mask[0])):
+			if np.all(mask[x][y]):
+				new_img[x+dx,y+dy] = img[x,y]
+
 	cv2.imwrite('new' + str(i) + '.jpg',new_img)
 
 # Save the image
 #new_img[0:50,0:50] = img[50:100,50:100]
 cv2.imwrite('new.jpg',new_img)
 print('Done')
-
-
-
-
-
-
-
-
