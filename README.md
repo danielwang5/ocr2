@@ -60,3 +60,17 @@ Our user inputs is a bounding box (which encapsulates the contours to be moved) 
 2. Click
 3. Numpy
 
+## Demonstration
+
+Replace a pattern
+```
+python main2.py --image example_01.jpg
+```
+Duplicate a pattern
+```
+python main2.py --image example_01.jpg --no-remove
+```
+Remove a pattern
+```
+python main2.py --image example_01.jpg --no-add
+```
