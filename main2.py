@@ -9,7 +9,7 @@ import random
 @click.option('--image', type=str, default='example_01.jpg', help='Image to be modified')
 @click.option('--remove/--no-remove', default=True, help='Remove the text')
 @click.option('--add/--no-add', default=True, help='Add the text back')
-@click.option('--write-step/--no-write-step', default=True, help='Include the write step')
+@click.option('--write-step/--no-write-step', default=False, help='Include the write step')
 @click.option('--show-identified-characters/--no-show-identified-characters', default=False)
 
 #global vars
@@ -227,7 +227,8 @@ def main(image, remove, add, write_step, show_identified_characters):
 			for x in range(len(mask)):
 				for y in range(len(mask[0])):
 					if np.all(mask[x][y]):
-						new_img[x+dx,y+dy] = img[x,y]
+						if x + dx < img.shape[0] and y + dy < img.shape[1]:
+							new_img[x+dx,y+dy] = img[x,y]
 			if write_step:
 				cv2.imwrite(image[:-4] + '_' + str(n) + '.jpg', new_img)
 
