@@ -4,9 +4,28 @@
 
 Duplicate or move particular characters (or more broadly, patterns) in an image.
 
-## Example Usage
+## Demonstration
 
-python main2.py --image=example_03.jpg --no-add
+Replace a pattern
+```
+python main2.py --image example_01.jpg
+```
+Duplicate a pattern
+```
+python main2.py --image example_01.jpg --no-remove
+```
+Remove a pattern
+```
+python main2.py --image example_01.jpg --no-add
+```
+Show the identified characters
+```
+python main2.py --image example_01.jpg --show-identified-characters
+```
+Store a picture for each step of the process
+```
+python main2.py --image example_01.jpg --write-step
+```
 
 ## Outline
 
@@ -57,20 +76,7 @@ Our user inputs is a bounding box (which encapsulates the contours to be moved) 
 ## Dependencies
 
 1. OpenCV
-2. Click
-3. Numpy
-
-## Demonstration
-
-Replace a pattern
-```
-python main2.py --image example_01.jpg
-```
-Duplicate a pattern
-```
-python main2.py --image example_01.jpg --no-remove
-```
-Remove a pattern
-```
-python main2.py --image example_01.jpg --no-add
-```
+2. Numpy
+3. click
+4. collections
+5. random
