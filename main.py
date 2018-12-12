@@ -50,6 +50,34 @@ in_contours = list(levels.values())
 in_contours = [_[0] for _ in in_contours]
 out_contours = [_ for _ in range(len(contours)) if _ not in in_contours]
 
+num_clicks = 0
+click_list = []
+
+#CLick code
+def on_click(event,x,y,flags,param):
+	global num_clicks, click_list
+
+	if event == cv2.EVENT_LBUTTONDBLCLK:
+		cv2.circle(img,(x,y),100,(255,0,0),-1)
+		print('x = %d, y = %d'%(x, y))
+
+		num_clicks += 1
+		click_list = click_list + [x,y]
+
+		if num_clicks == 3:
+			cv2.setMouseCallback('image', lambda *args : None)
+			cv2.destroyAllWindows()
+
+cv2.namedWindow('image')
+cv2.setMouseCallback('image',on_click)
+
+img = cv2.imread('example_01.jpg')
+cv2.imshow('image',img)
+cv2.waitKey(0)
+
+coords = click_list[:4]
+x3,y3 = click_list[4:]
+
 
 # Show all out contours
 # for i in out_contours:
