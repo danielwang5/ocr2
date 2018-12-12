@@ -4,6 +4,10 @@
 
 Duplicate or move particular characters (or more broadly, patterns) in an image.
 
+## Example Usage
+
+python main2.py --image=example_03.jpg --no-add
+
 ## Outline
 
 1. Detect contours in image
