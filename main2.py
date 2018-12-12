@@ -40,11 +40,19 @@ def find_inter_region(contours,i):
 	#print(mask)
 	return mask
 
+def find_nearest_color(img,mask,coord):
+	x,y = coord
+	while np.all(mask[x][y]):
+		y += 1
+	if not np.all(mask[x][y]) and not np.all(mask[x][y+1]) and not np.all(mask[x][y+2]):
+		return img[x,y+1]
+	return (255,255,255)
+
 
 
 
 # Read image, convert to black/white, find the contours, remove  outline of image
-img = cv2.imread('example_01.jpg')
+img = cv2.imread('example_02.jpg')
 new_img =img.copy() 
 img_gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
 ret,thresh = cv2.threshold(img_gray,127,255,0)
@@ -90,7 +98,7 @@ def on_click(event,x,y,flags,param):
 
 cv2.namedWindow('image')
 cv2.setMouseCallback('image',on_click)
-img = cv2.imread('example_01.jpg')
+img = cv2.imread('example_02.jpg')
 cv2.imshow('image',img)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
@@ -126,14 +134,15 @@ for i in selected_contours:
 	for x in range(len(mask)):
 		for y in range(len(mask[0])):
 			if np.all(mask[x][y]):
-				new_img[x,y] = (0,0,255)
-	cv2.imshow('aaa',new_img)	
-	cv2.waitKey(0)
+				#new_img[x,y] = (0,0,255)
+				#print(find_nearest_color(img,mask,[x,y]))
+				new_img[x,y] = find_nearest_color(img,mask,[x,y])
+	#cv2.imshow('aaa',new_img)	
+	#cv2.waitKey(0)
 
 
 #cv2.waitKey(1000)
 
-#x1 = y1 = 0
 dx, dy = x3-x1, y3-y1
 print(dx,dy)
 # Draw the new contours
@@ -146,9 +155,8 @@ for i in selected_contours:
 			if np.all(mask[x][y]):
 				new_img[x+dx,y+dy] = img[x,y]
 
-	cv2.imwrite('new' + str(i) + '.jpg',new_img)
+	cv2.imwrite('new2' + str(i) + '.jpg',new_img)
 
 # Save the image
-#new_img[0:50,0:50] = img[50:100,50:100]
-cv2.imwrite('new.jpg',new_img)
+cv2.imwrite('new2.jpg',new_img)
 print('Done')
