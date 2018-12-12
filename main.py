@@ -26,6 +26,7 @@ def inside_select(coords,contour):
 
 # Read image, convert to black/white, find the contours, remove  outline of image
 img = cv2.imread('example_01.jpg')
+new_img =img.copy() 
 img_gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
 ret,thresh = cv2.threshold(img_gray,127,255,0)
 img2, contours, hierarchy = cv2.findContours(thresh,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
@@ -63,7 +64,7 @@ out_contours = [_ for _ in range(len(contours)) if _ not in in_contours]
 
 # Cover selected characters in white
 coords = [0, 0, 500, 500]
-x3,y3 = [100, 100]
+x3,y3 = [50, 50]
 #coords = [x1, y1, x2, y2]
 selected_contours = []
 for i in out_contours:
@@ -76,17 +77,39 @@ for i in selected_contours:
 	contour = contours[i]
 	roi, area, coords = get_roi_area_coords(contour)
 	xs, ys, xn, yn = coords
-	r = cv2.rectangle(img,(xs, ys),(xn, yn),(0,255,0),-1)
-	cv2.imshow('ddd', r)
-cv2.waitKey(5000)
+	cv2.rectangle(new_img,(xs, ys),(xn, yn),(255,255,255),-1)
+	#r = cv2.rectangle(img,(xs, ys),(xn, yn),(0,255,0),-1)
+	#cv2.imshow('ddd', r)
 
+#cv2.waitKey(1000)
 
-
+x1 = y1 = 0
+dx, dy = x3-x1, y3-y1
 # Draw the new contours
-
-
-
+for i in selected_contours:
+	print(i)
+	contour = contours[i]
+	roi, area, coords = get_roi_area_coords(contour)
+	xs, ys, xe, ye = coords
+	print(coords)
+	#print(new_img.shape)
+	#print(img.shape)
+	#print(new_img[xs+dx:xe+dx, ys+dy:ye+dy].shape)
+	#print(img[xs:xe, ys:ye].shape)
+	new_img[ys+dy:ye+dy,xs+dx:xe+dx] = img[ys:ye, xs:xe]
+	print(xs+dx,xe+dx, ys+dy,ye+dy)
+	print(xs,xe, ys,ye)
+	cv2.imwrite('new' + str(i) + '.jpg',new_img)
 
 # Save the image
+new_img[0:50,0:50] = img[50:100,50:100]
+cv2.imwrite('new.jpg',new_img)
+print('Done')
+
+
+
+
+
+
 
 
