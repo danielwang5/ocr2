@@ -2,7 +2,6 @@ import numpy as np
 import cv2
 from collections import defaultdict
 
-
 def get_roi_area_coords(contour):
 	x, y, w, h = cv2.boundingRect(contour)
 	roi = img[y:y + h, x:x + w]
@@ -20,7 +19,7 @@ def inside(contour1,contour2):
 
 def inside_select(coords,contour):
 	xs1, ys1, xe1, ye1 = coords
-	xs2, ys2, w2, h2 = cv2.boundingRect(contour2)
+	xs2, ys2, w2, h2 = cv2.boundingRect(contour)
 	xe2, ye2 = xs2 + w2, ys2 + h2
 	return (xs1 < xs2) and (ys1 < ys2) and (xe1 > xe2) and (ye1 > ye2)
 
@@ -54,12 +53,12 @@ out_contours = [_ for _ in range(len(contours)) if _ not in in_contours]
 num_clicks = 0
 click_list = []
 
-#CLick code
+#Click code
 def on_click(event,x,y,flags,param):
 	global num_clicks, click_list
 
 	if event == cv2.EVENT_LBUTTONDBLCLK:
-		cv2.circle(img,(x,y),100,(255,0,0),-1)
+		#cv2.circle(img,(x,y),100,(255,0,0),-1)
 		print('x = %d, y = %d'%(x, y))
 
 		num_clicks += 1
@@ -67,18 +66,18 @@ def on_click(event,x,y,flags,param):
 
 		if num_clicks == 3:
 			cv2.setMouseCallback('image', lambda *args : None)
-			cv2.destroyAllWindows()
+			#cv2.destroyAllWindows()
 
 cv2.namedWindow('image')
 cv2.setMouseCallback('image',on_click)
-
 img = cv2.imread('example_01.jpg')
 cv2.imshow('image',img)
 cv2.waitKey(0)
-
+cv2.destroyAllWindows()
 coords = click_list[:4]
 x3,y3 = click_list[4:]
-
+x1,y1,x2,y2 = coords
+print(coords)
 
 # Show all out contours
 # for i in out_contours:
@@ -91,16 +90,15 @@ x3,y3 = click_list[4:]
 # cv2.waitKey(5000)
 
 # Cover selected characters in white
-coords = [0, 0, 500, 500]
-x3,y3 = [50, 50]
+#coords = [0, 0, 500, 500]
+#x3,y3 = [50, 50]
 #coords = [x1, y1, x2, y2]
 selected_contours = []
 for i in out_contours:
 	contour = contours[i]
 	if inside_select(coords,contour):
 		selected_contours.append(i)
-
-#print(selected_contours)
+print(selected_contours)
 for i in selected_contours:
 	contour = contours[i]
 	roi, area, coords = get_roi_area_coords(contour)
@@ -111,8 +109,9 @@ for i in selected_contours:
 
 #cv2.waitKey(1000)
 
-x1 = y1 = 0
+#x1 = y1 = 0
 dx, dy = x3-x1, y3-y1
+print(dx,dy)
 # Draw the new contours
 for i in selected_contours:
 	print(i)
