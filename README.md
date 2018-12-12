@@ -10,6 +10,7 @@
 5. Fill missing background information from moving contours
    * Take neighest neighbor of edge node, and loop until all missing background pixels are filled
    * May also use a neighborhood heuristic instead of a single node
+6. Final image is save in the directory
 
 ### 1. Detecting Contours
 We used OvenCV2's contour detection API function in order to detect dark text on a light background. Our output is a pixel by pixel list of the boundary of each letter.
@@ -26,7 +27,7 @@ We do a similar process for the child contours to create a binary array B for pi
 Our user inputs is a bounding box (which encapsulates the contours to be moved) and an additional point P that represents the top left corner of the moved bounding box. This is pretty straightforward, because we simply translate and overwrite each pixel based on C. The more challenging part is cleverly filling the missing pixels in the original location as a result from moving the contours.
 
 ### 5. Filling Missing Background Information
-
+We use a simple nearest neighbor process to fill in the missing pixels. Each step, we get the border pixels of the missing segment and assign it the same color as its directly adjacent neighbor. We continue doing this until all pixels are filled. Note that this process is more effective when the background has unsharp gradients.
   
 ## Additional Features
 
