@@ -1,12 +1,13 @@
 import numpy as np
 import cv2
 from collections import defaultdict
+from itertools import chain
 
 show_identified_characters = False
 remove = True
 add = True
 write_step = True
-image = 'example_03.jpg'
+image = 'example_04.jpg'
 
 
 def get_roi_area_coords(contour):
@@ -47,7 +48,8 @@ def find_inter_region(contours,i):
 	#print(mask)
 	return mask
 
-def find_nearest_color(img,mask,coord):
+
+def find_nearest_color_2(img,mask,coord):
 	x,y = coord
 	while np.all(mask[x][y]):
 		y += 1
@@ -79,7 +81,7 @@ for i in range(len(contours)-1):
 			levels[j].append(i)
 
 in_contours = list(levels.values())
-in_contours = [_[0] for _ in in_contours]
+in_contours = list(chain.from_iterable(in_contours))
 out_contours = [_ for _ in range(len(contours)) if _ not in in_contours]
 
 num_clicks = 0
@@ -118,9 +120,9 @@ if show_identified_characters:
 		contour = contours[i]
 		roi, area, coords = get_roi_area_coords(contour)
 		xs, ys, xn, yn = coords
-		rect = cv2.rectangle(img, (xs, ys), (xn, yn), (0, 255, 0), 2)
+		rect = cv2.rectangle(img, (xs, ys), (xn, yn), (0, 0, 255), 2)
 		cv2.imshow('rect', rect)
-
+		cv2.imwrite(image[:-4] + '_boxes.jpg', rect)
 	cv2.waitKey(5000)
 
 
