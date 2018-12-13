@@ -1,5 +1,7 @@
 # ocr2
 
+An Optical Character Recognition System (OCR) with Pattern Editing Functionalities
+
 ## Goal
 
 Identify characters (or more broadly, patterns) within a scanned image and edit the image by duplicating, removing, or relocating selected characters. 
@@ -79,3 +81,11 @@ Our user inputs is a bounding box (which encapsulates the contours to be moved) 
 3. click
 4. collections
 5. random
+
+
+## References
+1. Xinyu Zhou et al. (2017). EAST: An Efficient and Accurate Scene Text Detector. arXiv:1704.03155 [cs.CV]
+2. Ray Smith (2007). An overview of the Tesseract OCR Engine. Proc. 9th IEEE ICDAR.
+3. Gregory Cohen et al. (2017). EMNIST: an extension of MNIST to handwritten letters. arXiv:1702.05373 [cs.CV]
+4. Adrian Rosebrock (2018). OpenCV Text Detection (EAST text detector). https://www.pyimagesearch.com/2018/08/20/opencv-text-detection-east-text-detector/
+5. Soumith Chintala. Deep Learning with PyTorch: A 60 Minute Blitz. https://pytorch.org/tutorials/beginner/deep_learning_60min_blitz.html
